@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .list-group-horizontal>.list-group-item+.list-group-item{
+            border-left-width: 1px !important;
+        }
+        .img_cover{
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <!-- <img class="img_cover" src="https://i.pinimg.com/originals/ab/9a/1e/ab9a1e39d41f6411c259043fe5993fd9.jpg" alt="Cover"> -->
+                    <!-- <img class="img_cover" src="https://3.bp.blogspot.com/-uEccf9h1cIU/VnQie302hCI/AAAAAAAAAbU/pCVd2y293Tg/s1600/anh-bia-facebook-danh-cho-tet-va-trang-tri-dip-tet-den-xuan-ve-namloan.blogspot.com.png" alt="Cover"> -->
+                    <img class="img_cover" src="https://3.bp.blogspot.com/--BZjYTrQ6mE/VnQigj9XXGI/AAAAAAAAAb8/hyO7FOAWaQM/s1600/anh-bia-facebook-tet-dep.png" alt="Cover">
+                    
+                    <div class="text-center">
+                        <h1 class="mt-4 text-warning"> {{title}}  </h1>
+                        <div class="display-1 my-4">{{number}}</div>
+                        <button class="btn btn-danger" v-on:click="onClear">Clear</button>
+                        <button class="btn btn-success" v-on:click="onChange">Change number</button>
+                    </div>
+                    
+                    <h3 class="my-3">Number of numbers called: {{count}}</h3>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button v-on:click="onSearchNumber" class="btn btn-outline-primary" type="button">Search</button>
+                        </div>
+                        <input v-model="searchNumber" type="number" class="form-control" placeholder="Find your number...">
+                    </div>
+                    <span> {{resultSearch}} </span>
+                    <h3 class="my-3">History</h3>
+                    <ul class="list-group list-group-horizontal d-flex flex-wrap">
+                        <li class="list-group-item m-2" v-for="item in listNumber">
+                            <span class="badge badge-pill badge-info py-2 px-3">{{item.number}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                title: "Lucky App",
+                number: 0,
+                count: 0,
+                listNumber: [],
+                searchNumber: null,
+                resultSearch: '',
+            },
+            methods: {
+                onSearchNumber: function(){
+                    this.resultSearch = "Sorry! This number is not available.";
+                    this.listNumber.map(val => {
+                        if(val.number === Number(this.searchNumber)){
+                            this.resultSearch = "Found number " + this.searchNumber + " in the database!";
+                        }
+                    })
+                },
+                onClear: function(){
+                    this.number = 0;
+                    this.count = 0;
+                    this.listNumber = [];
+                    this.searchNumber = null;
+                    this.resultSearch = '';
+                },
+                onRandom: function (array) { 
+                    var number = 0;
+                    do{
+                        var count = 0;
+                        number = Math.floor(Math.random() * 90) + 1;
+                        array.map(val => {
+                            if(number === val.number){
+                                count++;
+                            }
+                        })
+                    }while(count>0);
+                    return number;
+                },
+                onChange: function(){
+                    this.number = this.onRandom(this.listNumber);
+                    this.listNumber.unshift({
+                        id: Date.now(),
+                        number: this.number,
+                    })
+                    this.count = this.listNumber.length;
+                }
+            }
+        })
+    </script>
+</body>
+</html>
