@@ -30,11 +30,12 @@
                     <div class="text-center">
                         <h1 class="mt-4 text-warning"> {{title}}  </h1>
                         <div class="display-1 my-4">{{number}}</div>
-                        <button class="btn btn-danger" v-on:click="onClear">Clear</button>
-                        <button class="btn btn-success" v-on:click="onChange">Change number</button>
+                        <div class="py-3">
+                            <button class="btn btn-danger" v-on:click="onClear">Clear</button>
+                            <button class="btn btn-warning" v-on:click="onTurnVoice">Voice {{isVoice ? 'On' : 'Off'}}</button>
+                            <button class="btn btn-success" v-on:click="onChange">Change number</button>
+                        </div>
                     </div>
-                    
-                    <h3 class="my-3">Number of numbers called: {{count}}</h3>
 
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
@@ -48,23 +49,31 @@
                         <li class="list-group-item m-2" v-for="item in listNumber">
                             <span class="badge badge-pill badge-info py-2 px-3">{{item.number}}</span>
                         </li>
-                    </ul>
+                    </ul> 
                 </div>
             </div>
         </div>
     </div>
-    
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=SL7v4mlo"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script>
+        function speakText(){
+            var text = document.getElementById('txt').value;
+            responsiveVoice.speak(text, "Vietnamese Female");
+            
+        }
+        function speakNumber(number){
+            responsiveVoice.speak(number, "Vietnamese Female");
+        }
         var app = new Vue({
             el: '#app',
             data: {
                 title: "Lucky App",
                 number: 0,
-                count: 0,
                 listNumber: [],
                 searchNumber: null,
                 resultSearch: '',
+                isVoice: true,
             },
             methods: {
                 onSearchNumber: function(){
@@ -77,7 +86,6 @@
                 },
                 onClear: function(){
                     this.number = 0;
-                    this.count = 0;
                     this.listNumber = [];
                     this.searchNumber = null;
                     this.resultSearch = '';
@@ -97,11 +105,20 @@
                 },
                 onChange: function(){
                     this.number = this.onRandom(this.listNumber);
+                    if(this.isVoice){
+                        this.speakNumber(this.number.toString());
+                    }
                     this.listNumber.unshift({
                         id: Date.now(),
                         number: this.number,
                     })
                     this.count = this.listNumber.length;
+                },
+                speakNumber: function(number){
+                    responsiveVoice.speak(number, "Vietnamese Female", {volume: 4});
+                },
+                onTurnVoice: function(){
+                    this.isVoice = !this.isVoice;
                 }
             }
         })
